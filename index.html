@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Mandy Tjandra</title>
+
+    <link rel="icon" href="logo.jpg" type="image/png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Mandy Tjandra.</div>
+
+        <div class="nav-group">
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+
+            <div class="nav-separator"></div>
+
+            <button id="theme-toggle" class="theme-btn" aria-label="Toggle Dark Mode">
+                <i class="fas fa-sun"></i>
+            </button>
+        </div>
+
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content reveal">
+            <div class="badge">Informatics Engineering Student</div>
+            <h1>Building Logic, Creativity, and <span class="gradient-text">Game Development.</span></h1>
+            <p>I am a student at Institut Teknologi Sepuluh Nopember (ITS) passionate about combining code and
+                creativity to build amazing games.</p>
+
+            <div class="hero-btns">
+                <a href="#contact" class="btn btn-primary">Let's Connect</a>
+                <a href="#projects" class="btn btn-secondary">View Portfolio</a>
+            </div>
+        </div>
+        <div class="hero-image reveal">
+            <div class="img-wrapper">
+                <img src="profile.jpg" alt="Mandy Tjandra">
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container reveal">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-card glass-card">
+                <p>
+                    I am currently majoring in <strong>Informatics Engineering at Institut Teknologi Sepuluh Nopember
+                        (ITS)</strong>. My passion lies in coding, specifically in <strong>Game Development</strong>,
+                    where I enjoy merging logical problem-solving with creative design.
+                </p>
+                <br>
+                <p>
+                    Beyond the screen, I have honed my leadership and communication skills through active participation
+                    in organizations like <strong>MUN ITS, TEDxITS, and GERIGI X UKM EXPO ITS 2025</strong>. I love
+                    driving projects that create meaningful impact, from event coordination to financial planning.
+                </p>
+                <br>
+                <p style="font-style: italic; color: var(--accent); font-size: 0.9em;">
+                    ⚡ <strong>Fun fact:</strong> I wear a watch while sleeping just to track how much time I don’t spend
+                    coding! 😄
+                </p>
+
+                <div class="skills-grid">
+                    <span class="skill-tag">Game Development</span>
+                    <span class="skill-tag">C++</span>
+                    <span class="skill-tag">C#</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">C</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">HTML & CSS</span>
+                    <span class="skill-tag">PHP</span>
+                    <span class="skill-tag">SQL</span>
+                    <span class="skill-tag">Team Leadership</span>
+                    <span class="skill-tag">Finance</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="showcase" class="section">
+        <div class="container reveal">
+            <h2 class="section-title">Portfolio Highlights</h2>
+            <p class="subtitle">A visual look at my game development & creative work.</p>
+
+            <div class="showcase-wrapper">
+
+                <div class="showcase-card glass-card">
+                    <div class="showcase-media">
+                        <img src="Hobi Ngoding.png" alt="Hobi Ngoding Screenshot">
+                    </div>
+                    <div class="showcase-content">
+                        <h3>Hobi Ngoding</h3>
+                        <p>"Hobi Ngoding" is an educational website designed to guide beginners through the fundamentals
+                            of web development, offering structured tutorials and interactive demos on HTML, CSS,
+                            JavaScript, and PHP. The platform features a clean interface with comprehensive modules that
+                            take users from basic syntax to dynamic application concepts, complete with simulated login
+                            and registration pages.</p>
+                        <div class="showcase-tech">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JS</span>
+                            <span>PHP</span>
+                        </div>
+                        <div class="showcase-links">
+                            <a href="#" class="btn btn-primary btn-sm">Visit website</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="showcase-card glass-card">
+                    <div class="showcase-media">
+                        <img src="Catch Him!.png" alt="Catch Him Screenshot">
+                    </div>
+                    <div class="showcase-content">
+                        <h3>Catch Him!</h3>
+                        <p>"Catch Him!" is a turn-based strategy game where you play as a police officer on a grid,
+                            using variable step sizes and bombs to navigate obstacles and capture evasive AI robbers.
+                        </p>
+                        <div class="showcase-tech">
+                            <span>Python</span>
+                        </div>
+                        <div class="showcase-links">
+                            <a href="#" class="btn btn-primary btn-sm">Download game</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="showcase-card glass-card">
+                    <div class="showcase-media">
+                        <img src="Neon Shooter.png" alt="Project 3 Screenshot">
+                    </div>
+                    <div class="showcase-content">
+                        <h3>Neon Shooter</h3>
+                        <p>"Neon Shooter" is a fast-paced, top-down arcade game where players use keyboard and mouse
+                            controls to survive against waves of red, tracking enemies. The game features a vibrant neon
+                            aesthetic enhanced by particle effects and screen shake mechanics to create an intense
+                            combat experience.</p>
+                        <div class="showcase-tech">
+                            <span>Python</span>
+                        </div>
+                        <div class="showcase-links">
+                            <a href="#" class="btn btn-primary btn-sm">Download Game</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <div class="container reveal">
+            <h2 class="section-title">Featured Projects</h2>
+            <p class="subtitle">Fetched live from GitHub</p>
+
+            <div id="github-projects" class="projects-grid">
+                <div class="loader">Loading projects...</div>
+            </div>
+
+            <div class="center-btn">
+                <a href="https://github.com/MandyTjandra?tab=repositories" target="_blank" class="btn btn-secondary">See
+                    More on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <div class="container reveal">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="contact-intro">I am always open to discussing new projects, creative ideas, or opportunities to be
+                part of your visions.</p>
+
+            <div class="social-grid">
+
+                <a href="https://linkedin.com/in/mandytjandra" target="_blank" class="social-card glass-card linkedin">
+                    <i class="fab fa-linkedin-in"></i>
+                    <span>LinkedIn</span>
+                </a>
+
+                <a href="https://github.com/MandyTjandra" target="_blank" class="social-card glass-card github">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </a>
+
+                <a href="https://leetcode.com/MandyTjandra" target="_blank" class="social-card glass-card leetcode">
+                    <i class="fas fa-code"></i>
+                    <span>LeetCode</span>
+                </a>
+
+                <a href="https://instagram.com/mandy_tjandra05" target="_blank"
+                    class="social-card glass-card instagram">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+            </div>
+
+            <div class="email-container">
+                <p>Or email me directly: </p>
+                <a href="mailto:maitjandra05@gmail.com" class="email-link">maitjandra05@gmail.com</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Mandy Tjandra. Built with code & creativity.</p>
+    </footer>
+
+    <a href="#home" id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
