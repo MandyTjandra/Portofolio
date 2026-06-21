@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Racing Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background-color: transparent; 
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .hud {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .score-box {
+            background: rgba(11, 15, 25, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            padding: 8px 20px;
+            border-radius: 12px;
+            color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .top-score-box {
+            background: rgba(11, 15, 25, 0.7);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            padding: 8px 20px;
+            border-radius: 12px;
+            color: #a855f7;
+            text-shadow: 0 0 10px #a855f7;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        /* PERUBAHAN: Posisi Hint diubah ke atas dan diberi efek transisi memudar */
+        .controls-hint {
+            position: absolute;
+            top: 80px; 
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85rem;
+            color: #9ca3af;
+            background: rgba(11, 15, 25, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            transition: opacity 0.5s ease;
+        }
+
+        #start-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 15, 25, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #f3f4f6;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        #start-screen h1 {
+            color: #a855f7;
+            text-shadow: 0 0 20px #a855f7;
+            margin-bottom: 5px;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        #start-screen p {
+            color: #38bdf8;
+            font-size: 1rem;
+            text-align: center;
+            margin: 0;
+        }
+
+        #joystick-zone {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.1);
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            z-index: 20;
+            display: none;
+            touch-action: none;
+            pointer-events: auto;
+        }
+
+        #joystick-knob {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 35px;
+            height: 35px;
+            background: #38bdf8;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #38bdf8;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-layer">
+        <div class="hud">
+            <div class="score-box" id="score-display">SCORE: 0</div>
+            <div class="top-score-box" id="high-score-display">BEST: 0</div>
+        </div>
+        <div class="controls-hint" id="control-text">W A S D or Arrows to Steer</div>
+    </div>
+
+    <div id="start-screen">
+        <h1 id="title-text">NEON RACING</h1>
+        <p id="subtitle-text">Click to Start Engine</p>
+    </div>
+
+    <div id="joystick-zone">
+        <div id="joystick-knob"></div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = document.getElementById('gameCanvas');
+            
+            // --- SETUP BACKGROUND MUSIC ---
+            // Pastikan ekstensi file audionya benar, misalnya .mp3, .wav, atau .ogg
+            const bgMusic = new Audio('music.mp3'); 
+            bgMusic.loop = true; // Ini akan membuat lagu otomatis diulang (looping) saat selesai
+            bgMusic.volume = 0.5; // (Opsional) Atur volume dari 0.0 hingga 1.0 agar tidak terlalu bising
+            // ------------------------------
+
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0b0f19, 0.025); 
+
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+
+            const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            window.addEventListener('resize', () => {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+
+            const gridHelper = new THREE.GridHelper(400, 150, 0x6366f1, 0x111827);
+            gridHelper.position.y = -3;
+            scene.add(gridHelper);
+
+            const player = new THREE.Group();
+            const playerMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true });
+
+            const bodyGeo = new THREE.CylinderGeometry(0.1, 0.6, 3, 6);
+            bodyGeo.rotateX(Math.PI / 2);
+            const body = new THREE.Mesh(bodyGeo, playerMat);
+            player.add(body);
+
+            const wingGeo = new THREE.BoxGeometry(5.0, 0.1, 0.8); 
+            const wing = new THREE.Mesh(wingGeo, playerMat);
+            wing.position.set(0, 0, -0.4); 
+            player.add(wing);
+
+            const tailGeo = new THREE.BoxGeometry(0.1, 0.8, 0.8);
+            const tail = new THREE.Mesh(tailGeo, playerMat);
+            tail.position.set(0, 0.4, 1);
+            player.add(tail);
+
+            player.position.set(0, 0, 5);
+            scene.add(player);
+
+            camera.position.set(0, 3, 12);
+            camera.lookAt(0, 0, -20);
+
+            let isPlaying = false;
+            let score = 0;
+            let highScore = 0;
+            let speed = 0.5; 
+            let obstacles = [];
+            
+            let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, w: false, a: false, s: false, d: false };
+
+            const uiStartScreen = document.getElementById('start-screen');
+            const uiScore = document.getElementById('score-display');
+            const uiHighScore = document.getElementById('high-score-display');
+            const titleText = document.getElementById('title-text');
+            const subtitleText = document.getElementById('subtitle-text');
+            const controlText = document.getElementById('control-text');
+
+            // PERUBAHAN: Menghilangkan teks hint saat ditekan
+            window.addEventListener('keydown', (e) => { 
+                if(keys.hasOwnProperty(e.key)) keys[e.key] = true; 
+                controlText.style.opacity = '0'; 
+            });
+            window.addEventListener('keyup', (e) => { if(keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+
+            const joystickZone = document.getElementById('joystick-zone');
+            const joystickKnob = document.getElementById('joystick-knob');
+            let joyActive = false;
+            let joyX = 0; let joyY = 0;
+
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                joystickZone.style.display = 'block'; 
+                controlText.innerText = "Use Joystick to Steer";
+                subtitleText.innerText = "Tap to Start Engine";
+            }
+
+            function handleTouch(e) {
+                e.preventDefault(); 
+                if (!isPlaying) return; 
+                joyActive = true;
+                
+                // PERUBAHAN: Menghilangkan teks hint saat joystick disentuh
+                controlText.style.opacity = '0'; 
+
+                const touch = e.targetTouches[0];
+                const rect = joystickZone.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const dx = touch.clientX - centerX;
+                const dy = touch.clientY - centerY;
+                
+                const maxRadius = rect.width / 2;
+                const distance = Math.min(Math.hypot(dx, dy), maxRadius);
+                const angle = Math.atan2(dy, dx);
+                
+                const knobX = distance * Math.cos(angle);
+                const knobY = distance * Math.sin(angle);
+                joystickKnob.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+                
+                joyX = knobX / maxRadius;
+                joyY = -(knobY / maxRadius); 
+            }
+
+            function resetJoystick(e) {
+                e.preventDefault();
+                joyActive = false;
+                joyX = 0; joyY = 0;
+                joystickKnob.style.transform = `translate(-50%, -50%)`;
+            }
+
+            joystickZone.addEventListener('touchstart', handleTouch, { passive: false });
+            joystickZone.addEventListener('touchmove', handleTouch, { passive: false });
+            joystickZone.addEventListener('touchend', resetJoystick, { passive: false });
+
+            const spawnRange = 40; 
+            const pillarGeo = new THREE.BoxGeometry(2, 20, 2); 
+            const pillarMat = new THREE.MeshBasicMaterial({ color: 0xec4899, wireframe: true }); 
+            // Lingkaran diubah menjadi warna kuning
+            const sphereGeo = new THREE.SphereGeometry(1.8, 8, 8); 
+            const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffeb3b, wireframe: true }); 
+            const smallCubeGeo = new THREE.BoxGeometry(1.8, 1.8, 1.8);
+            const smallCubeMat = new THREE.MeshBasicMaterial({ color: 0x10b981, wireframe: true }); 
+
+            function spawnObstacle() {
+                if (!isPlaying) return;
+                let obstacle;
+                const rand = Math.random();
+
+                // PERUBAHAN: Sistem Anti-Camping (30% rintangan mengejar koordinat X pemain)
+                let spawnX;
+                if (Math.random() < 0.3) {
+                    spawnX = player.position.x + (Math.random() * 6 - 3); 
+                } else {
+                    spawnX = (Math.random() - 0.5) * spawnRange; 
+                }
+
+                if (rand < 0.33) {
+                    obstacle = new THREE.Mesh(pillarGeo, pillarMat);
+                    obstacle.position.set(spawnX, 7, -100); 
+                    obstacle.userData = { type: 'pillar' }; 
+                } else if (rand < 0.66) {
+                    obstacle = new THREE.Mesh(sphereGeo, sphereMat);
+                    // Y dimodifikasi agar bisa menutupi area paling bawah (-2)
+                    const spawnY = (Math.random() * 10) - 2; 
+                    obstacle.position.set(spawnX, spawnY, -100);
+                    obstacle.userData = { type: 'sphere', hitRadius: 1.5 };
+                } else {
+                    obstacle = new THREE.Mesh(smallCubeGeo, smallCubeMat);
+                    // Y dimodifikasi agar bisa menutupi area paling bawah (-2)
+                    const spawnY = (Math.random() * 10) - 2; 
+                    obstacle.position.set(spawnX, spawnY, -100);
+                    obstacle.userData = { type: 'smallcube' };
+                }
+                
+                scene.add(obstacle);
+                obstacles.push(obstacle);
+
+                let spawnRate = Math.max(400, 1500 - (score * 1.5)); 
+                setTimeout(spawnObstacle, spawnRate);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                if (isPlaying) {
+                    score += 1;
+                    uiScore.innerText = `SCORE: ${score}`;
+                    speed += 0.0001; 
+
+                    gridHelper.position.z += speed;
+                    if (gridHelper.position.z > 5) gridHelper.position.z = 0;
+
+                    let currentMoveX = 0;
+                    let currentMoveY = 0;
+
+                    if (keys.ArrowLeft || keys.a) currentMoveX = -1;
+                    if (keys.ArrowRight || keys.d) currentMoveX = 1;
+                    if (keys.ArrowUp || keys.w) currentMoveY = 1;
+                    if (keys.ArrowDown || keys.s) currentMoveY = -1;
+
+                    if (joyActive) {
+                        currentMoveX = joyX;
+                        currentMoveY = joyY;
+                    }
+
+                    const moveSpeed = 0.4;
+                    if (currentMoveX < 0 && player.position.x > -18) player.position.x += currentMoveX * moveSpeed;
+                    if (currentMoveX > 0 && player.position.x < 18) player.position.x += currentMoveX * moveSpeed;
+                    if (currentMoveY > 0 && player.position.y < 6) player.position.y += currentMoveY * moveSpeed;
+                    if (currentMoveY < 0 && player.position.y > -2) player.position.y += currentMoveY * moveSpeed;
+
+                    const targetZRotation = currentMoveX * -0.6;
+                    player.rotation.z += (targetZRotation - player.rotation.z) * 0.1;
+                    
+                    const targetXRotation = currentMoveY * 0.2;
+                    player.rotation.x += (targetXRotation - player.rotation.x) * 0.1;
+
+                    for (let i = obstacles.length - 1; i >= 0; i--) {
+                        let obs = obstacles[i];
+                        obs.position.z += speed + 0.5;
+
+                        if (obs.userData.type === 'sphere' || obs.userData.type === 'smallcube') {
+                            obs.rotation.x += 0.02;
+                            obs.rotation.y += 0.03;
+                        }
+
+                        if (obs.position.z > 15) {
+                            scene.remove(obs);
+                            obstacles.splice(i, 1);
+                            continue;
+                        }
+
+                        if (obs.userData.type === 'pillar') {
+                            const distanceX = Math.abs(player.position.x - obs.position.x);
+                            const distanceY = Math.abs(player.position.y - obs.position.y);
+                            const distanceZ = Math.abs(player.position.z - obs.position.z);
+                            if (distanceX < 2.0 && distanceY < 10.5 && distanceZ < 2) gameOver();
+                        } else if (obs.userData.type === 'sphere') {
+                            const dist = player.position.distanceTo(obs.position);
+                            const playerHitRadius = 1.2; 
+                            if (dist < playerHitRadius + obs.userData.hitRadius) gameOver();
+                        } else if (obs.userData.type === 'smallcube') {
+                            const distanceX = Math.abs(player.position.x - obs.position.x);
+                            const distanceY = Math.abs(player.position.y - obs.position.y);
+                            const distanceZ = Math.abs(player.position.z - obs.position.z);
+                            if (distanceX < 1.8 && distanceY < 1.5 && distanceZ < 1.5) gameOver();
+                        }
+                    }
+                }
+                renderer.render(scene, camera);
+            }
+
+            function startGame() {
+                isPlaying = true;
+                score = 0;
+                speed = 0.5;
+                uiStartScreen.style.display = 'none';
+                player.position.set(0, 0, 5);
+                player.rotation.set(0, 0, 0); 
+                
+                joyX = 0; joyY = 0; joyActive = false;
+                joystickKnob.style.transform = `translate(-50%, -50%)`;
+
+                obstacles.forEach(obs => scene.remove(obs));
+                obstacles = [];
+                spawnObstacle();
+
+                bgMusic.play();
+            }
+
+            function gameOver() {
+                isPlaying = false;
+                uiStartScreen.style.display = 'flex';
+                titleText.innerText = 'CRASHED';
+                titleText.style.color = '#ff003c';
+                titleText.style.textShadow = '0 0 15px #ff003c';
+                subtitleText.innerText = `Final Score: ${score} - Tap to Retry`;
+                
+                // PERUBAHAN: Tampilkan kembali teks hint ketika Game Over
+                controlText.style.opacity = '1'; 
+
+                if (score > highScore) {
+                    highScore = score;
+                    uiHighScore.innerText = `BEST: ${highScore}`;
+                }
+
+                bgMusic.pause();
+                bgMusic.currentTime = 0;
+            }
+
+            uiStartScreen.addEventListener('click', () => {
+                if (!isPlaying) startGame();
+            });
+
+            animate();
+        });
+    </script>
+</body>
+</html>

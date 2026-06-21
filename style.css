@@ -240,15 +240,48 @@ ul {
     transition: 0.3s;
 }
 
-/* --- Hero Section --- */
+/* ========================================= */
+/* --- Hero Section (Dikembalikan ke Asli) --- */
+/* ========================================= */
 .hero {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Teks di kiri, Foto di kanan */
     padding: 0 10%;
     padding-top: 80px;
     position: relative;
+    gap: 20px;
+}
+
+.hero-content {
+    max-width: 600px;
+}
+
+/* ========================================= */
+/* --- Dedicated Game Showcase Section --- */
+/* ========================================= */
+#game-showcase {
+    padding: 0 10% 80px; /* Jarak ruang di sekitar game */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#game-iframe {
+    width: 100%;
+    max-width: 1200px;
+    height: 420px; /* Proporsi memanjang (Widescreen) untuk PC */
+    border-radius: 15px;
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+    background-color: var(--bg-secondary);
+    transition: box-shadow 0.3s ease;
+    display: block;
+}
+
+#game-iframe:hover {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.4);
 }
 
 .hero-content {
@@ -453,10 +486,11 @@ ul {
 }
 
 .social-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    max-width: 900px;
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 15px;  
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -465,10 +499,12 @@ ul {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 30px;
+    padding: 20px 15px;
     color: var(--text-light);
     font-weight: 600;
     transition: 0.3s;
+    width: 160px;
+    flex-grow: 0;
 }
 
 .social-card i {
@@ -488,6 +524,10 @@ ul {
 
 .leetcode i {
     color: #ffa116;
+}
+
+.spoj i {
+    color: #337AB7; /* Warna khas SPOJ */
 }
 
 .instagram i {
@@ -512,6 +552,12 @@ ul {
 .leetcode:hover {
     border-color: #ffa116;
     box-shadow: 0 0 15px rgba(255, 161, 22, 0.4);
+    transform: translateY(-5px);
+}
+
+.spoj:hover {
+    border-color: #337AB7;
+    box-shadow: 0 0 15px rgba(75, 102, 146, 0.4);
     transform: translateY(-5px);
 }
 
@@ -591,6 +637,57 @@ footer {
 @media (max-width: 768px) {
     .navbar {
         padding: 15px 20px;
+    }
+
+    .hero {
+        flex-direction: column-reverse;
+        text-align: center;
+        padding-top: 120px;
+        gap: 30px;
+    }
+
+    .hero-image img {
+        width: 250px;
+        height: 250px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .hero-btns {
+        justify-content: center;
+    }
+
+    /* Penyesuaian jarak dan tinggi game di Mobile */
+    #game-showcase {
+        padding: 0 5% 60px; /* Jarak padding dikurangi di layar kecil */
+        margin-top: 100px;
+    }
+
+    #game-iframe {
+        height: 450px; /* Tetap tinggi di mobile agar joystick lega */
+    }
+
+    .hero-inner {
+        display: flex;
+        flex-direction: column-reverse;
+        /* Foto di atas, Teks di bawah */
+        text-align: center;
+        gap: 30px;
+    }
+
+    .hero-image img {
+        width: 250px;
+        height: 250px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .hero-btns {
+        justify-content: center;
     }
 
     .hamburger {
