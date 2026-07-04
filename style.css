@@ -262,6 +262,7 @@ ul {
 /* --- Dedicated Game Showcase Section --- */
 /* ========================================= */
 #game-showcase {
+    margin-top: 80px;
     padding: 0 10% 80px; /* Jarak ruang di sekitar game */
     display: flex;
     justify-content: center;
